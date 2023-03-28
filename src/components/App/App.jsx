@@ -31,7 +31,7 @@ export class App extends Component {
   }
 
   getQueryOnSubmit = searchQuery => {
-    this.setState({ searchQuery, images: [] });
+    this.setState({ searchQuery, images: [], page: 1 });
   };
 
   getImages = async (searchQuery, page) => {
