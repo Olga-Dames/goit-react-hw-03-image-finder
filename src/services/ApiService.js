@@ -1,22 +1,20 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_KEY = '33310644-33c3a55021d389068af948751';
-axios.defaults.baseURL = `https://pixabay.com`
-const params = {
-q: 'cat',
-page: 1,
-image_type: 'photo',
-orientation: 'horizontal',
-per_page: 12,
-}
+axios.defaults.baseURL = `https://pixabay.com/api/`;
+axios.defaults.params = {
+  key: '33310644-33c3a55021d389068af948751',
+  image_type: 'photo',
+  orientation: 'horizontal',
+  per_page: 12,
+};
 
-export const getImages = async() => {
-    try {
-      const response = await axios.get(`/api/?q=cat&page=1&key=${API_KEY}`, {params});
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }
+const getImages = async (query, page) => {
+  const response = await axios.get(`?q=${query}&page=${page}`);
+  return response.data;
+};
 
+const api = {
+  getImages,
+};
 
+export default api;

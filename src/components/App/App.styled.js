@@ -6,3 +6,10 @@ grid-template-columns: 1fr;
 grid-gap: 16px;
 padding-bottom: 24px;
 `
+
+export const Error = styled.h1`
+padding-top: 150px;
+display: block;
+margin: 0 auto;
+color: red;
+`
