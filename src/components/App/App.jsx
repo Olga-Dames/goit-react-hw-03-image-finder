@@ -71,6 +71,7 @@ export class App extends Component {
   };
 
   openModal = (largeImageURL, tags) => {
+    console.log(tags);
     this.setState({
       isModalOpen: true,
       largeImageURL: largeImageURL,
@@ -87,7 +88,7 @@ export class App extends Component {
   render() {
     const { images, isLoading, error, isModalOpen, largeImageURL, tags } =
       this.state;
-    const content = images.length > 0;
+    const content = images.length > 1;
     return (
       <Container>
         <SearchBar onSubmit={this.getQueryOnSubmit} />
