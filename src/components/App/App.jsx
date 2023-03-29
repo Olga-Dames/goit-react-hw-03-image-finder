@@ -57,14 +57,12 @@ export class App extends Component {
   };
 
   handleLoadMore = async () => {
+    const { searchQuery, page } = this.state;
     try {
-      const { hits } = await api.getImages(
-        this.state.searchQuery,
-        this.state.page + 1
-      );
+      const { hits } = await api.getImages(searchQuery, page + 1);
       this.setState(state => ({
-        images: [ ...state.images, ...hits ],
-        page: state.page + 1
+        images: [...state.images, ...hits],
+        page: state.page + 1,
       }));
     } catch (error) {
       this.setState({ error: error.message });
