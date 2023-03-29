@@ -21,11 +21,12 @@ export class App extends Component {
     largeImageURL: 'largeImageURL',
     tags: 'tags',
     isModalOpen: false,
+    renderedImgNumber: 0,
   };
 
   componentDidUpdate(_, prevState) {
     const { searchQuery, page } = this.state;
-    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
+    if (prevState.searchQuery !== searchQuery) {
       this.getImages(searchQuery, page);
     }
   }
@@ -44,9 +45,9 @@ export class App extends Component {
       if (hits.length === 0) {
         toast.warning('Oops, there is no images on this request');
       }
-      this.setState(state => ({
-        images: [...state.images, ...hits],
-      }));
+      this.setState({
+        images: [...hits],
+      });
     } catch (error) {
       this.setState({ error: error.message });
       console.error(error);
@@ -55,10 +56,21 @@ export class App extends Component {
     }
   };
 
-  handleLoadMore = () => {
-    this.setState(state => ({
-      page: state.page + 1,
-    }));
+  handleLoadMore = async () => {
+    try {
+      const { hits } = await api.getImages(
+        this.state.searchQuery,
+        this.state.page + 1
+      );
+      this.setState(state => ({
+        images: [ ...state.images, ...hits ],
+        page: state.page + 1
+      }));
+    } catch (error) {
+      this.setState({ error: error.message });
+      console.error(error);
+    }
+
     this.scrollToBottom();
   };
 
@@ -71,7 +83,6 @@ export class App extends Component {
   };
 
   openModal = (largeImageURL, tags) => {
-    console.log(tags);
     this.setState({
       isModalOpen: true,
       largeImageURL: largeImageURL,
@@ -79,7 +90,7 @@ export class App extends Component {
     });
   };
 
-  closeModal = e => {
+  closeModal = () => {
     this.setState({
       isModalOpen: false,
     });
@@ -88,14 +99,14 @@ export class App extends Component {
   render() {
     const { images, isLoading, error, isModalOpen, largeImageURL, tags } =
       this.state;
-    const content = images.length > 1;
+    const content = images.length > 0;
     return (
       <Container>
         <SearchBar onSubmit={this.getQueryOnSubmit} />
         {isLoading ? (
           <Loader />
         ) : (
-          <ImageGallery images={images} openModal={this.openModal} />
+          content && <ImageGallery images={images} openModal={this.openModal} />
         )}
         {content && <Button onClickLoad={this.handleLoadMore} />}
         {isModalOpen && (
