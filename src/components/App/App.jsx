@@ -18,10 +18,9 @@ export class App extends Component {
     isLoading: false,
     error: null,
     page: 1,
-    largeImageURL: 'largeImageURL',
-    tags: 'tags',
+    largeImageURL: '',
+    tags: '',
     isModalOpen: false,
-    renderedImgNumber: 0,
   };
 
   componentDidUpdate(_, prevState) {
@@ -57,6 +56,8 @@ export class App extends Component {
   };
 
   handleLoadMore = async () => {
+    this.scrollToBottom();
+    this.setState({ isLoading: true });
     const { searchQuery, page } = this.state;
     try {
       const { hits } = await api.getImages(searchQuery, page + 1);
@@ -67,14 +68,14 @@ export class App extends Component {
     } catch (error) {
       this.setState({ error: error.message });
       console.error(error);
+    } finally {
+      this.setState({ isLoading: false });
     }
-
-    this.scrollToBottom();
   };
 
   scrollToBottom = () => {
     scroll.scrollToBottom({
-      duration: 1500,
+      duration: 1000,
       delay: 100,
       smooth: true,
     });
@@ -101,12 +102,18 @@ export class App extends Component {
     return (
       <Container>
         <SearchBar onSubmit={this.getQueryOnSubmit} />
+
         {isLoading ? (
           <Loader />
         ) : (
-          content && <ImageGallery images={images} openModal={this.openModal} />
+          content && (
+            <>
+              <ImageGallery images={images} openModal={this.openModal} />
+              <Button onClickLoad={this.handleLoadMore} />
+            </>
+          )
         )}
-        {content && <Button onClickLoad={this.handleLoadMore} />}
+
         {isModalOpen && (
           <Modal
             largeImageURL={largeImageURL}
