@@ -25,7 +25,7 @@ export class App extends Component {
 
   componentDidUpdate(_, prevState) {
     const { searchQuery, page } = this.state;
-    if( prevState.searchQuery !== searchQuery || prevState.page !== page) {
+    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
       this.getImages(searchQuery, page);
     }
   }
@@ -45,7 +45,7 @@ export class App extends Component {
         toast.warning('Oops, there is no images on this request');
       }
       this.setState(state => ({
-        images: [...state.images, ...hits]
+        images: [...state.images, ...hits],
       }));
     } catch (error) {
       this.setState({ error: error.message });
@@ -55,7 +55,7 @@ export class App extends Component {
     }
   };
 
-  handleLoadMore = async () => {
+  handleLoadMore = () => {
     this.setState(state => ({
       page: state.page + 1,
     }));
@@ -91,18 +91,8 @@ export class App extends Component {
     return (
       <Container>
         <SearchBar onSubmit={this.getQueryOnSubmit} />
-
-        {isLoading ? (
-          <Loader />
-        ) : (
-          content && (
-            <>
-              <ImageGallery images={images} openModal={this.openModal} />
-              <Button onClickLoad={this.handleLoadMore} />
-            </>
-          )
-        )}
-
+        {content && <ImageGallery images={images} openModal={this.openModal} />}
+        {content && !isLoading && <Button onClickLoad={this.handleLoadMore} />}
         {isModalOpen && (
           <Modal
             largeImageURL={largeImageURL}
@@ -110,6 +100,7 @@ export class App extends Component {
             onClose={this.closeModal}
           />
         )}
+        {isLoading && <Loader />}
         {error && (
           <Error>It's a pity, but something went wrong. Try a bit later!</Error>
         )}

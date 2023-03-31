@@ -5,6 +5,7 @@ display: grid;
 grid-template-columns: 1fr;
 grid-gap: 16px;
 padding-bottom: 24px;
+text-align: center;
 `
 
 export const Error = styled.h1`
