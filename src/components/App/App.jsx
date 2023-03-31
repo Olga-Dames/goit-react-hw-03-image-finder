@@ -25,7 +25,7 @@ export class App extends Component {
 
   componentDidUpdate(_, prevState) {
     const { searchQuery, page } = this.state;
-    if (prevState.searchQuery !== searchQuery) {
+    if( prevState.searchQuery !== searchQuery || prevState.page !== page) {
       this.getImages(searchQuery, page);
     }
   }
@@ -44,9 +44,9 @@ export class App extends Component {
       if (hits.length === 0) {
         toast.warning('Oops, there is no images on this request');
       }
-      this.setState({
-        images: [...hits],
-      });
+      this.setState(state => ({
+        images: [...state.images, ...hits]
+      }));
     } catch (error) {
       this.setState({ error: error.message });
       console.error(error);
@@ -56,21 +56,10 @@ export class App extends Component {
   };
 
   handleLoadMore = async () => {
+    this.setState(state => ({
+      page: state.page + 1,
+    }));
     this.scrollToBottom();
-    this.setState({ isLoading: true });
-    const { searchQuery, page } = this.state;
-    try {
-      const { hits } = await api.getImages(searchQuery, page + 1);
-      this.setState(state => ({
-        images: [...state.images, ...hits],
-        page: state.page + 1,
-      }));
-    } catch (error) {
-      this.setState({ error: error.message });
-      console.error(error);
-    } finally {
-      this.setState({ isLoading: false });
-    }
   };
 
   scrollToBottom = () => {
